@@ -1,3 +1,5 @@
+
+
 var onlineThoughtCounter = 0;
 var thoughtCounter = 0;
 var mobile = false;
@@ -9,16 +11,58 @@ if (/Mobi/.test(navigator.userAgent)) {
     	mobile = true; // mobile!
 }
 var thoughtCount = 0;
-var maxNumThoughtsDesktop = 32;
+var maxNumThoughtsDesktop = 35;
 var maxNumThoughtsMobile = 32;
-var globalID;
+var flushStreamInterval = 30000;
+var readThoughtRemoveInterval = 10000;
+var activeThought = 0;
+var watchID;
+var latitude;
+var longitude;
+let globalID;
 
 //*	This method opens the thought
 //*
-//* 
+//*
+
+function fadeAndRemoveThought(element) {
+	$(element).fadeOut(1000);
+	setTimeout(function() {
+		$(element).remove();
+		thoughtCount--;
+	}, 1000);
+}
+
+function flushThought(thought) {
+	setTimeout(function() {
+		if ($(thought) !== activeThought){
+			fadeAndRemoveThought(thought);
+		}
+	}, flushStreamInterval);
+}
+
 function openThought(thought) {
+	// Construct Thought 
+	// Fetch # of likes from Database
+	var thoughtID = parseInt($(thought).attr("id"));
+	globalID = thoughtID;
+	var color = $("#" + thoughtID + " div").css("background-color");
+	var boxShadow = $("#" + thoughtID + " div").css("box-shadow");
+	var fontSize;
+	var font;
+	//fetchLikes(thoughtID);
+	var likes = fetchLikes(thoughtID);
+	var thought = $("#" + thoughtID + " div textarea").val();
+	var distance = calculateDistance(latitude, longitude, latitude, longitude);
+	$("#read-thought").css({
+		"background": color,
+		"box-shadow": boxShadow
+	});
+	$("#read-thought textarea").html(thought);
+	console.log(color + ", " + thought + ", " + boxShadow);
+
+
 	// Open/Close Animations
-	markThoughtAsRead(thought);
 	$("#main-game-content").animate({
 		opacity: 0
 	}, 100);
@@ -27,32 +71,28 @@ function openThought(thought) {
 	}, 100),
 	$("#dark-overlay").css("display", "block");
 	$(".cancel-button").css("display", "block");
+	$("#dark-overlay").toggleClass("read-window");
 	$("#dark-overlay").animate({
 		opacity: 1
 	}, 100);
+	$(".read-window").on("click", function() {
+		$("#dark-overlay").removeClass("read-window");
+		markThoughtAsRead();
+	});
 	$("#thought-read-screen").css("display", "block");
 	$("#thought-read-screen").animate({
 		opacity: 1
 	}, 100);
 
-	// Construct Thought 
-	// Fetch # of likes from Database
-	var thoughtID = parseInt($(thought).attr("id"));
-	globalID = thoughtID;
-	var color = $("#" + thoughtID + " div").css("background-color");
-	var boxShadow = $("#" + thoughtID + " div").css("box-shadow");
-	var geoLocation;
-	var fontSize;
-	var font;
-	fetchLikes(thoughtID);
-	var likes = fetchLikes(thoughtID);
-	var thought = $("#" + thoughtID + " div textarea").val();
-	$("#read-thought").css({
-		"background": color,
-		"box-shadow": boxShadow
-	});
-	$("#read-thought textarea").html(thought);
-	console.log(color + ", " + thought + ", " + boxShadow);
+	// Calculate Distance
+	$("#read-thought-miles-away p").html(distance + " miles away");
+	$("#" + thoughtID).toggleClass("active");
+	activeThought = "#" + thoughtID;
+	console.log(activeThought);
+	/*
+	setTimeout(function() {
+		fadeAndRemoveThought(thought);
+	}, readThoughtRemoveInterval);*/
 }
 
 function fetchLikes(id) {
@@ -115,7 +155,7 @@ function fetchThought() {
 	var randomTop = Math.random() * 100;
 	// Size is  based on thoght distance from your geoLocation
 	//var randomSize = ((Math.floor(Math.random() * 10)) / 2) + 3;
-	var randomSize = ((Math.floor(Math.random() * 10)) / 2) + 6;
+	var randomSize = ((Math.floor(Math.random() * 10)) / 2) + 9;
 	// Color is set by user on thought creation.
 	// Must use AJAX to retrieve color values from database.
 	var randomColor = getRandomColor();
@@ -176,34 +216,40 @@ function generateThought(currentThought) {
 	}	
 }
 
-function markThoughtAsRead(thought) {
-
+function markThoughtAsRead() {
+	console.log("Read thought: " + activeThought);
+	activeThought = null;
 }
 
 function generateOnlineThought(id, color, geolocation, submitted, user, thought, fontSize, font, fontColor, likes, left, top, size) {
+	// MOBILE
 	if (mobile && thoughtCount <= maxNumThoughtsMobile) {
-		console.log(thoughtCount);
-		$("#background-graphic").append("<a href='#' onclick='openThought(this); markThoughtAsRead(this);' id='" + id + "' class='thought-wrapper' style='opacity: 0; animation-name: onlineThoughtAnim; animation-duration: 5s; animation-direction: alternate; animation-iteration-count: infinite; top: " + top + "%; left: " + left + "%;'><div style='box-shadow: 0px 0px 20px " + color + "; background: " + color + "; width: " + size + "px; height: " + size + "px;' class='thought'><textarea readonly>" + thought + "</textarea></div></a>");
+		//console.log(thoughtCount);
+		$("#background-graphic").append("<a href='#' onclick='openThought(this);' id='" + id + "' class='thought-wrapper' style='opacity: 0; animation-name: onlineThoughtAnim; animation-duration: 5s; animation-direction: alternate; animation-iteration-count: infinite; top: " + top + "%; left: " + left + "%;'><div style='box-shadow: 0px 0px 20px " + color + "; background: " + color + "; width: " + size + "px; height: " + size + "px;' class='thought'><textarea readonly>" + thought + "</textarea></div></a>");
 		$("#" + id).animate({
 			opacity: 1
 		}, 700);
 		onlineThoughtCounter++;
 		thoughtCount++;
+		//console.log("#" + id + " = " + activeThought);
+		flushThought("#" + id);
 		if (onlineThoughtCounter === maxNumThoughtsDesktop) {
 			onlineThoughtCounter = 0;
 		} else if (mobile && onlineThoughtCounter === maxNumThoughtsMobile) {
 			onlineThoughtCounter = 0;
 		}
 	}
-
+	// DESKTOP
 	if (mobile === false && thoughtCount <= maxNumThoughtsDesktop) {
-		console.log(thoughtCount);
-		$("#background-graphic").append("<a href='#' onclick='openThought(this); markThoughtAsRead(this);' id='" + id + "' class='thought-wrapper' style='opacity: 0; animation-name: onlineThoughtAnim; animation-duration: 5s; animation-direction: alternate; animation-iteration-count: infinite; top: " + top + "%; left: " + left + "%;'><div style='box-shadow: 0px 0px 20px " + color + "; background: " + color + "; width: " + size + "px; height: " + size + "px;' class='thought'><textarea readonly>" + thought + "</textarea></div></a>");
+		//console.log(thoughtCount);
+		$("#background-graphic").append("<a href='#' onclick='openThought(this);' id='" + id + "' class='thought-wrapper' style='opacity: 0; animation-name: onlineThoughtAnim; animation-duration: 5s; animation-direction: alternate; animation-iteration-count: infinite; top: " + top + "%; left: " + left + "%;'><div style='box-shadow: 0px 0px 20px " + color + "; background: " + color + "; width: " + size + "px; height: " + size + "px;' class='thought'><textarea readonly>" + thought + "</textarea></div></a>");
 		$("#" + id).animate({
 			opacity: 1
 		}, 700);
 		onlineThoughtCounter++;
 		thoughtCount++;
+		//console.log("#" + id + " = " + activeThought);
+		flushThought("#" + id);
 		if (onlineThoughtCounter === maxNumThoughtsDesktop) {
 			onlineThoughtCounter = 0;
 		} else if (mobile && onlineThoughtCounter === maxNumThoughtsMobile) {
@@ -311,6 +357,7 @@ function think(offline, online, mobile) {
 
 	//* 4. Online Thought Generator
 	if (online === true) {
+		watchPosition();
 		// ONLINE-MOBILE
 		if (mobile) {
 			console.log("Mobile enabled.");
@@ -329,16 +376,16 @@ function think(offline, online, mobile) {
 				console.log("Total thoughts alive: " + thoughtsAlive);*/
 			}, thoughtUpdateTime);
 
+			/*
 			killTimeout = setTimeout(function() {
 				thoughtKillInterval = setInterval(function() {
 					killOnlineThought($("#background-graphic .thought-wrapper:nth-child(1)"));
 					thoughtsKilled++
 					thoughtsAlive--;
 					thought = $(".thought");
-					/*console.log("Killing thought... \nSuccess. \nThoughts killed: " + thoughtsKilled);
-					console.log("Total thoughts alive: " + thoughtsAlive);*/
 				}, thoughtUpdateTime);
 			}, thoughtKilledDelay);
+			*/
 		}
 		else {
 		// ONLINE-DESKTOP
@@ -358,6 +405,7 @@ function think(offline, online, mobile) {
 				console.log("Total thoughts alive: " + thoughtsAlive);*/
 			}, thoughtUpdateTime);
 
+			/*
 			killTimeout = setTimeout(function() {
 				thoughtKillInterval = setInterval(function() {
 					killOnlineThought($("#background-graphic .thought-wrapper:nth-child(1)"));
@@ -365,10 +413,7 @@ function think(offline, online, mobile) {
 					thoughtsKilled++
 					thoughtsAlive--;
 					thought = $(".thought");
-					/*console.log("Killing thought... \nSuccess. \nThoughts killed: " + thoughtsKilled);
-					console.log("Total thoughts alive: " + thoughtsAlive);*/
-				}, thoughtUpdateTime);
-			}, thoughtKilledDelay);
+			}, thoughtKilledDelay);*/
 		}
 	}
 
@@ -386,6 +431,82 @@ function markAsSaved(button) {
 	$(button).css("color", "#05C10F")
 }
 
+// -----------------------------
+//	GeoLocation Functions
+// -----------------------------
+function watchPosition() {
+	if (navigator.geolocation) {
+		watchID = navigator.geolocation.watchPosition(updateStream, failedPosition);
+		console.log("Wathcing Location.");
+	} else {
+		document.getElementById("top-bar-error").innerHTML = "Please update your browser";
+		document.getElementById("top-bar-error").style.display = "block";
+	}
+}
+
+function fetchPosition() {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(processPosition, failedPosition);
+	} else {
+		document.getElementById("top-bar-error").innerHTML = "Please update your browser";
+		document.getElementById("top-bar-error").style.display = "block";
+	}
+}
+
+function processPosition(position) {
+	latitude = position.coords.latitude;
+	longitude = position.coords.longitude;
+	console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
+}
+
+function failedPosition(position) {
+	document.getElementById("top-bar-error").innerHTML = "Could not find position";
+	document.getElementById("top-bar-error").style.display = "block";
+}
+
+
+function updateStream(position) {
+	console.log(position);
+	fadeAndRemoveThought($(".thought-wrapper:nth-child(1)"));
+}
+
+function calculateDistance(latSource, longSource, latDest, longDest) {
+	var latSourceRadians = latSource * Math.PI / 180;
+	var longSourceRadians = longSource * Math.PI / 180;
+	var latDestRadians = latDest * Math.PI / 180;
+	var longDestRadians = longDest * Math.PI / 180;
+
+	var distance = 3959 * Math.acos(
+		Math.cos(latSourceRadians) * Math.cos(latDestRadians) *
+		Math.cos(longSourceRadians - longDestRadians) +
+		Math.sin(latSourceRadians) * Math.sin(latDestRadians)
+		);
+
+	distance = distance * 1.609344;
+	return distance;
+}
+
+function fetchThoughtPosition() {
+	$.ajax({
+		url: "fetch-geolocation.php",
+		type: "POST",
+		dataType: "json",
+		success: function(data) {
+			data.split("/");
+		}
+	});
+}
+
+//-------------------- Driver ----------------------
 think(true, false, mobile);
+fetchPosition();
+
+
+
+
+
+
+
+
 
 

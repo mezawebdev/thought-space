@@ -2,7 +2,7 @@
 
 
 function checkLogin() {
-	return false;
+	return true;
 }
 
 echo checkLogin();

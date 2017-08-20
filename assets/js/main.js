@@ -17,6 +17,8 @@ $(document).ready(function() {
 	var displayPreviewScreen = false;
 	var displayLoginScreen = true;
 	var displayOnlineBackgroundThoughts = false;
+	var latitude;
+	var longitude;
 
 	if (displayIntroScreen === false) {
 		$("#main-content").css("display", "none");
@@ -253,7 +255,7 @@ $(document).ready(function() {
 
 		// Fetches thought settings from Front-End
 		var color = rgb2hex($("#new-thought").css("background-color"));
-		var geoLocation = 129839123;
+		var geoLocation = latitude + "," + longitude;
 		var submitted = currentTime.toString();
 		var thought = $("#new-thought-text-container textarea").val();
 		var fontSize = $("#new-thought-text-container textarea").css("font-size");
@@ -324,6 +326,33 @@ $(document).ready(function() {
 				$("#settings-screen h1").html(id); 
 			}
 		});
+	}
+
+	// -----------------------------
+	//	GeoLocation Functions
+	// -----------------------------
+	function fetchPosition() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(processPosition, failedPosition);
+		} else {
+			document.getElementById("top-bar-error").innerHTML = "Please update your browser";
+			document.getElementById("top-bar-error").style.display = "block";
+		}
+	}
+
+	function processPosition(position) {
+		latitude = position.coords.latitude;
+		longitude = position.coords.longitude;
+		console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
+	}
+
+	function updateStream(position) {
+
+	}
+
+	function failedPosition(position) {
+		document.getElementById("top-bar-error").innerHTML = "Could not find position";
+		document.getElementById("top-bar-error").style.display = "block";
 	}
 
 	/******************************/

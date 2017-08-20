@@ -33,6 +33,7 @@ $_SESSION["id"] = "mezawebdev";
 	<script src="assets/js/thought-handlers.js"></script>
 	<!-- wrapper start -->
 	<div id="loading-screen"></div>
+	<div id="top-bar-error"><p>Lost connection to server<p></div>
 	<!--<div id="video-bg" data-vide-bg="mp4: assets/images/forrest-bg.mp4, poster: assets/images/forrest-bg-poster-2.jpg" data-vide-options="posterType: jpg, loop: true, muted: true, position: 0% 0%"></div>-->
 	<canvas id="background-canvas"></canvas>
 	<div id="background-graphic">
@@ -159,7 +160,7 @@ $_SESSION["id"] = "mezawebdev";
 					</div>
 				</div>
 				<div id="read-thought-miles-away">
-					<p>5 miles away</p>
+					<p></p>
 				</div>
 				<div id="read-thought-menu">
 					<ul>
@@ -168,7 +169,7 @@ $_SESSION["id"] = "mezawebdev";
 						<li><button onclick="like(this, globalID);" class="like-button"><i class="fa fa-heart" aria-hidden="true"><p class="total-likes">1</p></i></button></li>
 					</ul>
 				</div>
-				<button class="cancel-button"><span class="glyphicon glyphicon-remove"></span> Close</button>
+				<button id="mark-as-read" onclick="markThoughtAsRead();" class="cancel-button"><span class="glyphicon glyphicon-remove"></span> Close</button>
 			</div>
 		</div>
 	</div>
