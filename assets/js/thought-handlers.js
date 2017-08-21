@@ -53,7 +53,10 @@ function openThought(thought) {
 	//fetchLikes(thoughtID);
 	var likes = fetchLikes(thoughtID);
 	var thought = $("#" + thoughtID + " div textarea").val();
-	var distance = calculateDistance(latitude, longitude, latitude, longitude);
+	fetchDistance(thoughtID);
+	//console.log(fetchThoughtPosition(thoughtID));
+	//console.log("Position: " + position);
+	//var distance = calculateDistance(latitude, longitude, position[0], position[1]);
 	$("#read-thought").css({
 		"background": color,
 		"box-shadow": boxShadow
@@ -85,10 +88,9 @@ function openThought(thought) {
 	}, 100);
 
 	// Calculate Distance
-	$("#read-thought-miles-away p").html(distance + " miles away");
 	$("#" + thoughtID).toggleClass("active");
 	activeThought = "#" + thoughtID;
-	console.log(activeThought);
+	//console.log(activeThought);
 	/*
 	setTimeout(function() {
 		fadeAndRemoveThought(thought);
@@ -231,6 +233,7 @@ function generateOnlineThought(id, color, geolocation, submitted, user, thought,
 		}, 700);
 		onlineThoughtCounter++;
 		thoughtCount++;
+		console.log("thought geo: " + geolocation);
 		//console.log("#" + id + " = " + activeThought);
 		flushThought("#" + id);
 		if (onlineThoughtCounter === maxNumThoughtsDesktop) {
@@ -466,6 +469,8 @@ function failedPosition(position) {
 
 
 function updateStream(position) {
+	latitude = position.coords.latitude;
+	longitude = position.coords.longitude;
 	console.log(position);
 	fadeAndRemoveThought($(".thought-wrapper:nth-child(1)"));
 }
@@ -486,16 +491,35 @@ function calculateDistance(latSource, longSource, latDest, longDest) {
 	return distance;
 }
 
-function fetchThoughtPosition() {
+function fetchThoughtPosition(id) {
 	$.ajax({
 		url: "fetch-geolocation.php",
 		type: "POST",
 		dataType: "json",
+		data: "id=" + id,
 		success: function(data) {
-			data.split("/");
+			retrievePosition(data);
 		}
 	});
 }
+
+function fetchDistance(id) {
+	$.ajax({
+		url: "fetch-geolocation.php",
+		type: "POST",
+		dataType: "json",
+		data: "id=" + id,
+		success: function(data) {
+			var dataString = data[0].split(",");
+			var distance = calculateDistance(latitude, longitude, dataString[0], dataString[1]);
+			if (distance <= 0.01 ) {
+				distance = 0.01;
+			}
+			$("#read-thought-miles-away p").html(distance.toFixed(2) + " miles away");
+		}
+	});
+}
+
 
 //-------------------- Driver ----------------------
 think(true, false, mobile);

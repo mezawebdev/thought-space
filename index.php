@@ -43,7 +43,7 @@ $_SESSION["id"] = "mezawebdev";
 		<div id="new-thought-success">
 			<span class="glyphicon glyphicon-ok"></span>
 			<h1>Success!</h1>
-			<button><span class="glyphicon glyphicon-remove"></span>Close</button>
+			<button><span class="glyphicon glyphicon-remove"></span></button>
 		</div>
 		<div id="new-thought-failed">
 		</div>
@@ -151,7 +151,7 @@ $_SESSION["id"] = "mezawebdev";
 			</div>
 			<div id="settings-screen">
 				<h1>User</h1>
-				<button class="cancel-button"><span class="glyphicon glyphicon-remove"></span> Close</button>
+				<button class="cancel-button"><span class="glyphicon glyphicon-remove"></span></button>
 			</div>
 			<div id="thought-read-screen">
 				<div id="read-thought">
@@ -169,7 +169,7 @@ $_SESSION["id"] = "mezawebdev";
 						<li><button onclick="like(this, globalID);" class="like-button"><i class="fa fa-heart" aria-hidden="true"><p class="total-likes">1</p></i></button></li>
 					</ul>
 				</div>
-				<button id="mark-as-read" onclick="markThoughtAsRead();" class="cancel-button"><span class="glyphicon glyphicon-remove"></span> Close</button>
+				<button id="mark-as-read" onclick="markThoughtAsRead();" class="cancel-button"><span class="glyphicon glyphicon-remove"></span></button>
 			</div>
 		</div>
 	</div>
