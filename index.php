@@ -66,8 +66,8 @@ $_SESSION["id"] = "mezawebdev";
 			<option>24</option>
 			<option>32</option>
 		</select>
-		<button class="send-button"><span class="glyphicon glyphicon-send"></span> Share</button>
-		<button class="cancel-button"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+		<button class="send-button"><span class="glyphicon glyphicon-send"></span></button>
+		<button class="cancel-button"><span class="glyphicon glyphicon-remove"></span></button>
 	</div>
 	<div class="container">
 		<div class="row">

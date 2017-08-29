@@ -11,19 +11,26 @@ if (/Mobi/.test(navigator.userAgent)) {
     	mobile = true; // mobile!
 }
 var thoughtCount = 0;
-var maxNumThoughtsDesktop = 35;
-var maxNumThoughtsMobile = 32;
-var flushStreamInterval = 30000;
-var readThoughtRemoveInterval = 10000;
+const maxNumThoughtsDesktop = 35;
+const maxNumThoughtsMobile = 32;
+const flushStreamInterval = 30000;
+const readThoughtRemoveInterval = 10000;
 var activeThought = 0;
 var watchID;
 var latitude;
 var longitude;
 let globalID;
 
-//*	This method opens the thought
-//*
-//*
+
+
+
+
+//--------------------
+//		Utilities
+//--------------------
+function kilometersToMiles(km) {
+	return km * 0.62137;
+}
 
 function fadeAndRemoveThought(element) {
 	$(element).fadeOut(1000);
@@ -62,7 +69,7 @@ function openThought(thought) {
 		"box-shadow": boxShadow
 	});
 	$("#read-thought textarea").html(thought);
-	console.log(color + ", " + thought + ", " + boxShadow);
+	//console.log(color + ", " + thought + ", " + boxShadow);
 
 
 	// Open/Close Animations
@@ -104,7 +111,7 @@ function fetchLikes(id) {
 		data: "id=" + id,
 		dataType: "json",
 		success: function(likes) {
-			console.log(likes);
+			//console.log(likes);
 			if (likes == 0) {
 				$(".total-likes").html("");
 			} else {
@@ -129,7 +136,7 @@ function like(button, id) {
 
 
 function startThinking() {
-	console.log("Clicked!");
+	//console.log("Clicked!");
 	$("#loading-screen").fadeIn(1000);
 	clearInterval(thoughtCreationInterval);
 	thoughtCreationInterval = 0;
@@ -161,29 +168,57 @@ function fetchThought() {
 	// Color is set by user on thought creation.
 	// Must use AJAX to retrieve color values from database.
 	var randomColor = getRandomColor();
-	$.ajax({
-		url: "stream-get-thought-info.php",
-		type: "POST",
-		dataType: "json",
-		success: function(thought) {
-			//console.log(thought);
-			/*console.log(
-				"Thought Color: " + thought[0] +
-				"\nGeoLocation: " + thought[1] +
-				"\nSubmitted: " + thought[2] +
-				"\nThought: " + thought[3] +
-				"\nFont Size: " + thought[4] +
-				"\nFont: " + thought[5] +
-				"\nFont Color: " + thought[6]
-				);*/
-			generateOnlineThought(thought[0], thought[1], thought[2], thought[3], thought[4], thought[5], thought[6], thought[7], thought[8], thought[9], randomLeft, randomTop, randomSize);
-		},
-		error: function (xhr, ajaxOptions, thrownError) {
-           console.log(xhr.status);
-           console.log(xhr.responseText);
-           console.log(thrownError);
-       }
-	});
+	if (mobile && thoughtCount < maxNumThoughtsMobile) {
+		$.ajax({
+			url: "stream-get-thought-info.php",
+			type: "POST",
+			dataType: "json",
+			success: function(thought) {
+				//console.log(thought);
+				/*console.log(
+					"Thought Color: " + thought[0] +
+					"\nGeoLocation: " + thought[1] +
+					"\nSubmitted: " + thought[2] +
+					"\nThought: " + thought[3] +
+					"\nFont Size: " + thought[4] +
+					"\nFont: " + thought[5] +
+					"\nFont Color: " + thought[6]
+					);*/
+				generateOnlineThought(thought[0], thought[1], thought[2], thought[3], thought[4], thought[5], thought[6], thought[7], thought[8], thought[9], randomLeft, randomTop, randomSize);
+				console.log("Thought fetched.");
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+	           /*console.log(xhr.status);
+	           console.log(xhr.responseText);
+	           console.log(thrownError);*/
+	       }
+		});
+	} else if (! mobile && thoughtCount < maxNumThoughtsDesktop) {
+		$.ajax({
+			url: "stream-get-thought-info.php",
+			type: "POST",
+			dataType: "json",
+			success: function(thought) {
+				//console.log(thought);
+				/*console.log(
+					"Thought Color: " + thought[0] +
+					"\nGeoLocation: " + thought[1] +
+					"\nSubmitted: " + thought[2] +
+					"\nThought: " + thought[3] +
+					"\nFont Size: " + thought[4] +
+					"\nFont: " + thought[5] +
+					"\nFont Color: " + thought[6]
+					);*/
+				generateOnlineThought(thought[0], thought[1], thought[2], thought[3], thought[4], thought[5], thought[6], thought[7], thought[8], thought[9], randomLeft, randomTop, randomSize);
+				console.log("Thought fetched.");
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+	           /*console.log(xhr.status);
+	           console.log(xhr.responseText);
+	           console.log(thrownError);*/
+	       }
+		});
+	}
 }
 
 function getRandomColor() {
@@ -233,7 +268,10 @@ function generateOnlineThought(id, color, geolocation, submitted, user, thought,
 		}, 700);
 		onlineThoughtCounter++;
 		thoughtCount++;
-		console.log("thought geo: " + geolocation);
+		console.log("Current thoughts: " + thoughtCount);
+		// console.log("thought geo: " + geolocation);
+		var position = geolocation.split(",");
+
 		//console.log("#" + id + " = " + activeThought);
 		flushThought("#" + id);
 		if (onlineThoughtCounter === maxNumThoughtsDesktop) {
@@ -251,6 +289,7 @@ function generateOnlineThought(id, color, geolocation, submitted, user, thought,
 		}, 700);
 		onlineThoughtCounter++;
 		thoughtCount++;
+		console.log("Current thoughts: " + thoughtCount);
 		//console.log("#" + id + " = " + activeThought);
 		flushThought("#" + id);
 		if (onlineThoughtCounter === maxNumThoughtsDesktop) {
@@ -297,7 +336,7 @@ function think(offline, online, mobile) {
 	//* 3. Offline Thought Space Generator
 	if (offline === true) {
 		if (mobile) {
-			console.log("Mobile enabled.");
+			//console.log("Mobile enabled.");
 			var thought = $(".thought");
 			var thoughtUpdateTime = 1000;
 			var thoughtsCreated = 0;
@@ -328,7 +367,7 @@ function think(offline, online, mobile) {
 			}, thoughtKilledDelay);
 		}
 		else {
-			console.log("Desktop enabled.");
+			//console.log("Desktop enabled.");
 			var thought = $(".thought");
 			var thoughtUpdateTime = 1000;
 			var thoughtsCreated = 0;
@@ -347,7 +386,7 @@ function think(offline, online, mobile) {
 			killTimeout = setTimeout(function() {
 				thoughtKillInterval = setInterval(function() {
 					killThought($("#background-graphic .thought-wrapper:nth-child(1)"));
-					console.log("Offline Thought Killed.");
+					//console.log("Offline Thought Killed.");
 					thoughtsKilled++
 					thoughtsAlive--;
 					//thought = $(".thought");
@@ -363,67 +402,35 @@ function think(offline, online, mobile) {
 		watchPosition();
 		// ONLINE-MOBILE
 		if (mobile) {
-			console.log("Mobile enabled.");
+			//console.log("Mobile enabled.");
 			var thought = $(".thought");
 			var thoughtUpdateTime = 100;
-			var thoughtsCreated = 0;
-			var thoughtsKilled = 0;
-			var thoughtsAlive = 0;
 			var thoughtKilledDelay = 32000;
 			thoughtCreationInterval = setInterval(function() {
 				fetchThought();
-				thoughtsCreated++;
-				thoughtsAlive++;
 				thought = $(".thought");
 				/*console.log("Creating thought... \nSuccess. \nThoughts created: " + thoughtsCreated);
 				console.log("Total thoughts alive: " + thoughtsAlive);*/
 			}, thoughtUpdateTime);
-
-			/*
-			killTimeout = setTimeout(function() {
-				thoughtKillInterval = setInterval(function() {
-					killOnlineThought($("#background-graphic .thought-wrapper:nth-child(1)"));
-					thoughtsKilled++
-					thoughtsAlive--;
-					thought = $(".thought");
-				}, thoughtUpdateTime);
-			}, thoughtKilledDelay);
-			*/
 		}
 		else {
 		// ONLINE-DESKTOP
-			console.log("Desktop enabled.");
+			//console.log("Desktop enabled.");
 			var thought = $(".thought");
 			var thoughtUpdateTime = 100;
-			var thoughtsCreated = 0;
-			var thoughtsKilled = 0;
-			var thoughtsAlive = 0;
-			var thoughtKilledDelay = 64000;
 			thoughtCreationInterval = setInterval(function() {
 				fetchThought();
-				thoughtsCreated++;
-				thoughtsAlive++;
 				thought = $(".thought");
 				/*console.log("Creating thought... \nSuccess. \nThoughts created: " + thoughtsCreated);
 				console.log("Total thoughts alive: " + thoughtsAlive);*/
 			}, thoughtUpdateTime);
-
-			/*
-			killTimeout = setTimeout(function() {
-				thoughtKillInterval = setInterval(function() {
-					killOnlineThought($("#background-graphic .thought-wrapper:nth-child(1)"));
-					console.log("Online Thought Killed.");
-					thoughtsKilled++
-					thoughtsAlive--;
-					thought = $(".thought");
-			}, thoughtKilledDelay);*/
 		}
 	}
 
 }
 
 function invokeThought(thought) {
-	console.log("Thought Displayed");
+	//console.log("Thought Displayed");
 	$(thought).animate({
 		opacity: 1
 	}, 400);
@@ -440,7 +447,7 @@ function markAsSaved(button) {
 function watchPosition() {
 	if (navigator.geolocation) {
 		watchID = navigator.geolocation.watchPosition(updateStream, failedPosition);
-		console.log("Wathcing Location.");
+		//console.log("Wathcing Location.");
 	} else {
 		document.getElementById("top-bar-error").innerHTML = "Please update your browser";
 		document.getElementById("top-bar-error").style.display = "block";
@@ -459,7 +466,7 @@ function fetchPosition() {
 function processPosition(position) {
 	latitude = position.coords.latitude;
 	longitude = position.coords.longitude;
-	console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
+	//console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
 }
 
 function failedPosition(position) {
@@ -471,7 +478,7 @@ function failedPosition(position) {
 function updateStream(position) {
 	latitude = position.coords.latitude;
 	longitude = position.coords.longitude;
-	console.log(position);
+	//console.log(position);
 	fadeAndRemoveThought($(".thought-wrapper:nth-child(1)"));
 }
 
@@ -480,7 +487,6 @@ function calculateDistance(latSource, longSource, latDest, longDest) {
 	var longSourceRadians = longSource * Math.PI / 180;
 	var latDestRadians = latDest * Math.PI / 180;
 	var longDestRadians = longDest * Math.PI / 180;
-
 	var distance = 3959 * Math.acos(
 		Math.cos(latSourceRadians) * Math.cos(latDestRadians) *
 		Math.cos(longSourceRadians - longDestRadians) +
@@ -511,7 +517,7 @@ function fetchDistance(id) {
 		data: "id=" + id,
 		success: function(data) {
 			var dataString = data[0].split(",");
-			var distance = calculateDistance(latitude, longitude, dataString[0], dataString[1]);
+			var distance = kilometersToMiles(calculateDistance(latitude, longitude, dataString[0], dataString[1]));
 			if (distance <= 0.01 ) {
 				distance = 0.01;
 			}

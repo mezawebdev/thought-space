@@ -179,9 +179,9 @@ body {
       top: 50%;
       left: 50%;
       background: black;
-      border: 1px solid white;
       width: 60px;
       height: 35px;
+      border: none !important;
       border-radius: 10px;
       background: black;
       outline: none;
@@ -435,9 +435,10 @@ body {
     margin-left: -75px;
     top: 50%;
     left: 50%;
-    background: transparent;
-    border: 1px solid white;
-    border-radius: 5px; }
+    background: black;
+    border: none !important;
+    border-radius: 5px;
+    padding: 5px 5px 5px 5px; }
     @media (max-width: 480px) {
       #new-thought-container .sp-replacer {
         margin-top: 80px; } }
@@ -451,12 +452,15 @@ body {
     top: 50%;
     left: 50%;
     margin-top: 100px;
-    background: none;
+    background: black;
     color: white;
-    margin-left: -15px;
+    margin-left: -12px;
     margin: 1px solid white !important;
     border-radius: 5px !important;
-    outline: none; }
+    outline: none;
+    text-align: center;
+    border: none !important;
+    padding-left: 10px; }
     @media (max-width: 480px) {
       #new-thought-container select.font-select {
         margin-top: 80px; } }
@@ -468,12 +472,15 @@ body {
     top: 50%;
     left: 50%;
     margin-top: 100px;
-    margin-left: 60px;
-    background: none;
+    margin-left: 70px;
+    background: black;
     color: white;
+    border: none !important;
+    text-align: center;
     margin: 1px solid white !important;
     border-radius: 5px !important;
-    outline: none; }
+    outline: none;
+    padding-left: 10px; }
     @media (max-width: 480px) {
       #new-thought-container select.font-size-select {
         margin-top: 80px; } }
@@ -487,9 +494,9 @@ body {
     top: 50%;
     left: 50%;
     background: black;
-    border: 1px solid white;
     width: 60px;
     height: 35px;
+    border: none !important;
     border-radius: 10px;
     background: black;
     outline: none;
@@ -511,9 +518,9 @@ body {
     top: 50%;
     left: 50%;
     background: black;
-    border: 1px solid white;
     width: 60px;
     height: 35px;
+    border: none !important;
     border-radius: 10px;
     background: black;
     outline: none;
@@ -559,7 +566,6 @@ body {
       color: black;
       resize: none;
       outline: none;
-      font-family: sans-serif;
       font-size: 12pt; }
       @media (max-width: 480px) {
         #new-thought-container #new-thought #new-thought-text-container textarea {
@@ -648,9 +654,9 @@ body {
       top: 50%;
       left: 50%;
       background: black;
-      border: 1px solid white;
       width: 60px;
       height: 35px;
+      border: none !important;
       border-radius: 10px;
       background: black;
       outline: none;
@@ -693,9 +699,9 @@ body {
     left: 50%;
     margin-top: 160px;
     background: black;
-    border: 1px solid white;
-    width: 170px;
+    width: 60px;
     height: 35px;
+    border: none !important;
     border-radius: 10px;
     /*background: linear-gradient(130deg, rgba(65, 187, 65, 0.8) 60%, rgba(204, 230, 200, 0.8) 80%, rgba(65, 187, 65, 0.8) 95%);*/
     background: black;
@@ -716,8 +722,8 @@ body {
     left: 50%;
     margin-top: 205px;
     background: black;
-    border: 1px solid white;
-    width: 170px;
+    border: none !important;
+    width: 60px;
     height: 35px;
     border-radius: 10px;
     outline: none;
@@ -838,7 +844,6 @@ body {
       color: black;
       resize: none;
       outline: none;
-      font-family: sans-serif;
       font-size: 12pt;
       text-align: center;
       vertical-align: middle; }
@@ -858,7 +863,6 @@ body {
     left: 50%;
     margin-top: 160px;
     background: black;
-    border: 1px solid white;
     width: 170px;
     height: 35px;
     border-radius: 10px;
@@ -882,13 +886,13 @@ body {
     left: 50%;
     margin-top: 205px;
     background: black;
-    border: 1px solid white;
-    width: 170px;
+    width: 60px;
     height: 35px;
     border-radius: 10px;
     outline: none;
     /*background: linear-gradient(130deg, rgba(65, 187, 65, 0.8) 60%, rgba(204, 230, 200, 0.8) 80%, rgba(65, 187, 65, 0.8) 95%);*/
     background: black;
+    border: none !important;
     transition: background 0.5s ease-in-out; }
     @media (max-width: 480px) {
       #thought-read-screen button.cancel-button {

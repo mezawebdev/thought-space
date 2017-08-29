@@ -129,7 +129,7 @@ $(document).ready(function() {
 	}
 
 	function compactDiv(data, height, follower) {
-		console.log("haha");
+		//console.log("haha");
 		$(data).animate({
 			height: "-=" + height + "px"
 		}, 1000);
@@ -201,7 +201,7 @@ $(document).ready(function() {
 		var passwordRepeat = $(".register-content form input.password-repeat").val();
 		var email = $(".register-content form input.email").val();
 		var dataString = "username=" +  userName + "&password=" + password + "&password-repeat=" + passwordRepeat + "&email=" + email;
-		console.log(dataString);
+		//console.log(dataString);
 		$.ajax({
 			type: "POST",
 			url: "register_query.php",
@@ -209,7 +209,7 @@ $(document).ready(function() {
 			data: dataString,
 			success: function(data) {
 				$(".register-success").html("<span class='glyphicon glyphicon-ok'></span><h2>All set!</h2><br /><button onclick='startThinking();'>Start Thinking</button>");
-				console.log(data);
+				//console.log(data);
 			}
 		});
 	}
@@ -219,14 +219,14 @@ $(document).ready(function() {
 		var userName = $(".login-content form input.login-username").val();
 		var password = $(".login-content form input.login-password").val();
 		var dataString = "login-username=" + userName + "&login-password=" + password;
-		console.log(dataString);
+		//console.log(dataString);
 		$.ajax({
 			type: "POST",
 			url: "login_query.php",
 			dataType: "json",
 			data: dataString,
 			success: function(data) {
-				console.log(data);
+				//console.log(data);
 				if (data == null) {
 					$(".spinner").css("opacity", "0");
 				} else {
@@ -261,7 +261,7 @@ $(document).ready(function() {
 		var fontSize = $("#new-thought-text-container textarea").css("font-size");
 		var font = $("#new-thought-text-container textarea").css("font-family");
 		var fontColor = rgb2hex($("#new-thought-text-container textarea").css("color"));
-		console.log(
+		/*console.log(
 			"\nColor: " + color +
 			"\ngeoLocation: " + geoLocation +
 			"\nsubmitted: " + submitted +
@@ -269,9 +269,9 @@ $(document).ready(function() {
 			"\nfontSize: " + fontSize +
 			"\nfont: " + font +
 			"\nfontColor: " + fontColor
-			);
+			);*/
 		var dataString = "color=" + color + "&geolocation=" + geoLocation + "&thought=" + thought + "&font-size=" + fontSize + "&font=" + font + "&font-color=" + fontColor;
-		console.log(dataString);
+		//console.log(dataString);
 		$.ajax({
 			url: "stream-submit-new-thought.php",
 			type: "POST",
@@ -300,7 +300,7 @@ $(document).ready(function() {
 			url: "check_login.php",
 			type: "json",
 			success: function(loggedIn) {
-				console.log(loggedIn);
+				//console.log(loggedIn);
 				if (loggedIn) {
 					$(".spinner").hide();
 					startThinking();
@@ -343,7 +343,7 @@ $(document).ready(function() {
 	function processPosition(position) {
 		latitude = position.coords.latitude;
 		longitude = position.coords.longitude;
-		console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
+		//console.log("Latitude: " + latitude + "\nLongitude: " + longitude);
 	}
 
 	function updateStream(position) {
@@ -402,7 +402,7 @@ $(document).ready(function() {
 			for (var i = 0; i < 33; i++) {
 				thoughtArray[i] = $("#background-graphic .thought-wrapper:nth-child(" + i + ")");	
 			}
-			console.log(thoughtArray[4]);
+			//console.log(thoughtArray[4]);
 		}, 1000);
 	} else if (!isMobile) {
 		var thoughtArray = [];
@@ -547,7 +547,7 @@ $(document).ready(function() {
 	// Register Success Screen
 	//* 3. "Start Thinking" Button
 	/*$(startThinking).on("click", function() {
-		console.log("clicked");
+		//console.log("clicked");
 		$("#loading-screen").fadeIn(1500);
 	});*/
 
@@ -599,7 +599,7 @@ $(document).ready(function() {
 	$("#font-color-picker").spectrum();
 	$(".sp-choose, .sp-val").on("click", function() {
 		var colorString = $(".sp-preview-inner").css("background-color");
-		console.log(colorString);
+		//console.log(colorString);
 		setBackgroundColor($("#new-thought"), colorString);
 		setBoxShadow($("#new-thought"), colorString);
 	});
@@ -631,7 +631,7 @@ $(document).ready(function() {
 
 	setInterval(function() {
 		$(".thought-wrapper").on("click", function() {
-			console.log("yo!");
+			//console.log("yo!");
 		});
 	}, 1100);
 
